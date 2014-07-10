@@ -1,0 +1,26 @@
+{
+  "name": "leonkunert.de",
+  "version": "0.0.1",
+  "description": "leonkunert.de website",
+  "main": "index.html",
+  "keywords": [
+    "leonkunert.de"
+  ],
+  "authors": [
+    "Leon Kunert"
+  ],
+  "license": "MIT",
+  "homepage": "leonkunert.de",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.1.1",
+    "bootstrap-sass-official": "~3.2.0"
+  }
+}
