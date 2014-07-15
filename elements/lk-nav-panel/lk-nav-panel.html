@@ -1,14 +1,19 @@
 <link rel="import" href="/bower_components/polymer/polymer.html">
 
-<polymer-element name="lk-nav-panel" noscript>
+<polymer-element name="lk-nav-panel" attributes="logo brandname">
   <template>
-    <link rel="stylesheet" href="lk-nav-panel.css">
+    <link rel="stylesheet" href="/css/style.min.css">
 
-   <div class="navbar navbar-default navbar-fixed-top">
+    <div class="navbar navbar-default navbar-fixed-top">
       <div class="container">
         <div class="navbar-header">
-          <a href="../" class="navbar-brand">
-            <!--<img src="/users/leon/dropbox/LK.de/Logo_white_bg.svg" />-->
+          <a href="/" class="navbar-brand">
+            <template if="{{logo}}">
+              <img src="{{logo}}" />
+            </template>
+            <template if="{{!logo && brandname}}">
+              <p>{{brandname}}</p>
+            </template>
           </a>
           <button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#navbar-main">
             <span class="icon-bar"></span>
@@ -18,9 +23,9 @@
         </div>
         <div class="navbar-collapse collapse" id="navbar-main">
           <ul class="nav navbar-nav">
-            <li class="dropdown">
-              <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="themes">Themes <span class="caret"></span></a>
-              <ul class="dropdown-menu" aria-labelledby="themes">
+            <li class="dropdown" id="themes">
+              <a class="dropdown-toggle" on-click={{dropdown}}>Themes <span class="caret"></span></a>
+              <ul class="dropdown-menu">
                 <li><a href="../default/">Default</a></li>
                 <li class="divider"></li>
                 <li><a href="../amelia/">Amelia</a></li>
@@ -48,7 +53,7 @@
             </li>
             <li class="dropdown">
               <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="download">Download <span class="caret"></span></a>
-              <ul class="dropdown-menu" aria-labelledby="download">
+              <ul class="dropdown-menu">
                 <li><a href="../bower_components/bootstrap/dist/css/bootstrap.min.css">bootstrap.min.css</a></li>
                 <li><a href="../bower_components/bootstrap/dist/css/bootstrap.css">bootstrap.css</a></li>
               </ul>
@@ -62,6 +67,17 @@
         </div>
       </div>
     </div>
-
   </template>
+  <script>
+    Polymer('lk-nav-panel', {
+      // These default values are overridden
+      // by the user's attribute values.
+      logo: "",
+      brandname: "",
+      dropdown: function () {
+        console.log($(this.$.themes).addClass('open'));
+        console.log('message');
+      }
+    });
+  </script>
 </polymer-element>

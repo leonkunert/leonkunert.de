@@ -1,0 +1,25 @@
+@import "mixins";
+
+$navbar-height: 50px;
+$navbar-margin-bottom: 20px;
+$navbar-bg-color: #fff;
+$navbar-border-color: #eee;
+$navbar-box-shadow: 0 0 4px rgba(0, 0, 0, 0.25);
+
+:host {
+  position: relative;
+
+  display: block;
+
+  min-height: $navbar-height;
+  margin-bottom: $navbar-margin-bottom;
+
+  background-color: $navbar-bg-color;
+
+  @include box-shadow($navbar-box-shadow);
+
+  :before {
+    content: " ";
+    display: table;
+  }
+}
