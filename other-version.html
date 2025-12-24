@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TERMINAL // MODERN_DIGITAL_CLASSIC</title>
+    <meta name="description" content="A high-contrast, bold, and monospace digital showcase.">
+
+    <!-- Preconnect for fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Using 'Space Mono' for that wide, techy, terminal look -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- CSS VARIABLES & RESET --- */
+        :root {
+            /* Colors */
+            --bg-color: #050505;
+            --surface-color: #111111;
+            --border-color: #333333;
+            --text-main: #f0f0f0;
+            --text-muted: #888888;
+            
+            /* Neon Accents */
+            --neon-primary: #ccff00; /* Acid Lime */
+            --neon-secondary: #00f3ff; /* Cyan */
+            --neon-alert: #ff0055; /* Pink/Red */
+
+            /* Spacing & Layout */
+            --container-width: 1200px;
+            --spacing-sm: 1rem;
+            --spacing-md: 2rem;
+            --spacing-lg: 4rem;
+            
+            /* Typography */
+            --font-mono: 'Space Mono', 'Courier New', monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        ::selection {
+            background-color: var(--neon-primary);
+            color: var(--bg-color);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-mono);
+            line-height: 1.5;
+            overflow-x: hidden;
+            /* Subtle grid background pattern */
+            background-image: 
+                linear-gradient(rgba(20, 20, 20, 0.5) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(20, 20, 20, 0.5) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        /* Scanline Overlay Effect (Optional Retro Feel) */
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* --- TYPOGRAPHY --- */
+        h1, h2, h3, h4 {
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: -0.05em; /* Condensed look */
+            line-height: 1.1;
+        }
+
+        h1 {
+            font-size: clamp(3rem, 8vw, 6rem);
+            margin-bottom: var(--spacing-md);
+            color: var(--text-main);
+        }
+
+        h2 {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            margin-bottom: var(--spacing-md);
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: var(--spacing-sm);
+            display: inline-block;
+        }
+
+        p {
+            margin-bottom: var(--spacing-md);
+            font-size: 1.125rem;
+            max-width: 65ch;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        /* --- UTILITIES --- */
+        .container {
+            width: 100%;
+            max-width: var(--container-width);
+            margin: 0 auto;
+            padding: 0 var(--spacing-md);
+        }
+
+        .text-neon-primary { color: var(--neon-primary); }
+        .text-neon-secondary { color: var(--neon-secondary); }
+        
+        .highlight {
+            background-color: var(--neon-primary);
+            color: var(--bg-color);
+            padding: 0 4px;
+            font-weight: 700;
+        }
+
+        /* --- COMPONENTS --- */
+
+        /* Chunky Category Chips */
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 16px;
+            border: 2px solid var(--border-color);
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-right: 8px;
+            margin-bottom: 8px;
+            background: transparent;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .chip:hover, .chip.active {
+            border-color: var(--neon-primary);
+            color: var(--bg-color);
+            background-color: var(--neon-primary);
+            box-shadow: 4px 4px 0px var(--neon-secondary);
+            transform: translate(-2px, -2px);
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            background-color: var(--text-main);
+            color: var(--bg-color);
+            padding: 16px 32px;
+            font-weight: 700;
+            text-transform: uppercase;
+            border: 2px solid var(--text-main);
+            cursor: pointer;
+            font-size: 1rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: transparent;
+            color: var(--text-main);
+            box-shadow: -4px 4px 0 var(--neon-secondary);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: var(--neon-primary);
+            border-color: var(--neon-primary);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--neon-primary);
+            color: var(--bg-color);
+        }
+
+        /* --- HEADER --- */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: var(--spacing-md) 0;
+            background-color: rgba(5, 5, 5, 0.9);
+            backdrop-filter: blur(5px);
+            z-index: 100;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .nav-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -1px;
+        }
+
+        .logo span { color: var(--neon-primary); }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: var(--spacing-md);
+        }
+
+        nav a {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        nav a:hover {
+            color: var(--neon-secondary);
+            text-decoration: underline;
+            text-decoration-thickness: 2px;
+        }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            padding-top: 180px;
+            padding-bottom: 100px;
+            min-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .status-badge {
+            display: inline-block;
+            border: 1px solid var(--neon-secondary);
+            color: var(--neon-secondary);
+            padding: 4px 12px;
+            font-size: 0.8rem;
+            margin-bottom: var(--spacing-md);
+            text-transform: uppercase;
+        }
+
+        .glitch-text {
+            position: relative;
+        }
+        
+        /* Blinking Cursor */
+        .cursor {
+            display: inline-block;
+            width: 10px;
+            height: 1em;
+            background-color: var(--neon-primary);
+            animation: blink 1s step-end infinite;
+            vertical-align: middle;
+        }
+
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+
+        /* --- GRID / WORK SECTION --- */
+        .section-padding {
+            padding: var(--spacing-lg) 0;
+        }
+
+        .filter-bar {
+            margin-bottom: var(--spacing-lg);
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--spacing-sm);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: var(--spacing-md);
+        }
+
+        .card {
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            padding: var(--spacing-md);
+            transition: border-color 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .card:hover {
+            border-color: var(--neon-primary);
+        }
+
+        .card-img-wrapper {
+            width: 100%;
+            height: 220px;
+            overflow: hidden;
+            margin-bottom: var(--spacing-md);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .card-img-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(100%) contrast(1.2);
+            transition: all 0.4s ease;
+        }
+
+        .card:hover .card-img-wrapper img {
+            filter: grayscale(0%) contrast(1);
+            transform: scale(1.05);
+        }
+
+        .card-header {
+            margin-bottom: var(--spacing-sm);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-main);
+        }
+
+        .card-id {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-family: monospace;
+        }
+
+        .card-tags {
+            margin-top: auto;
+            padding-top: var(--spacing-sm);
+        }
+
+        .chip-sm {
+            font-size: 0.7rem;
+            padding: 4px 8px;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            margin-right: 4px;
+        }
+
+        /* --- INFO / ABOUT --- */
+        .info-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-lg);
+        }
+
+        .terminal-box {
+            border: 2px solid var(--border-color);
+            padding: var(--spacing-md);
+            background-color: var(--surface-color);
+            position: relative;
+        }
+
+        .terminal-box::before {
+            content: "CMD_PROMPT";
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            background: var(--bg-color);
+            padding: 0 10px;
+            color: var(--neon-secondary);
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px dashed var(--border-color);
+            padding: 10px 0;
+            font-size: 1.1rem;
+        }
+        .stat-row:last-child { border: none; }
+        .stat-val { color: var(--neon-primary); font-weight: bold; }
+
+        /* --- FOOTER --- */
+        footer {
+            border-top: 1px solid var(--border-color);
+            padding: var(--spacing-lg) 0;
+            margin-top: var(--spacing-lg);
+            text-align: center;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--spacing-md);
+            text-align: left;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .footer-col h4 {
+            color: var(--neon-primary);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .footer-col ul {
+            list-style: none;
+        }
+
+        .footer-col li {
+            margin-bottom: 0.5rem;
+            color: var(--text-muted);
+        }
+
+        .footer-col a:hover {
+            color: var(--text-main);
+        }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 768px) {
+            .hero { padding-top: 120px; }
+            .info-layout { grid-template-columns: 1fr; }
+            .nav-wrapper { flex-direction: column; gap: 1rem; }
+            h1 { font-size: 3rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container nav-wrapper">
+            <a href="#" class="logo">
+                &lt;NEO<span class="text-neon-secondary">.</span>TYPE/&gt;
+            </a>
+            <nav>
+                <ul>
+                    <li><a href="#work">PROJECTS</a></li>
+                    <li><a href="#about">DATA</a></li>
+                    <li><a href="#contact">SIGNAL</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <!-- HERO SECTION -->
+        <section class="hero container">
+            <div class="status-badge">● SYSTEM ONLINE</div>
+            <h1>
+                BOLD.<br>
+                <span class="text-neon-secondary">CONDENSED.</span><br>
+                DIGITAL<span class="cursor"></span>
+            </h1>
+            <p style="font-size: 1.25rem; color: var(--text-muted);">
+                Constructing high-contrast interfaces for the modern web. 
+                Blending retro terminal aesthetics with brutalist layout principles.
+            </p>
+            <div style="margin-top: var(--spacing-md);">
+                <a href="#work" class="btn">Initialize</a>
+                <a href="#about" class="btn btn-outline" style="margin-left: 1rem;">Read_Logs</a>
+            </div>
+        </section>
+
+        <!-- WORK / GRID SECTION -->
+        <section id="work" class="section-padding container">
+            <h2>// SELECTED_WORKS</h2>
+            
+            <!-- Chunky Category Chips Filter -->
+            <div class="filter-bar">
+                <button class="chip active">ALL_SYSTEMS</button>
+                <button class="chip">UI_DESIGN</button>
+                <button class="chip">FRONTEND</button>
+                <button class="chip">BRUTALISM</button>
+                <button class="chip">3D_ASSETS</button>
+            </div>
+
+            <div class="grid">
+                <!-- Card 1 -->
+                <article class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-id">ID: #0492</div>
+                            <h3 class="card-title">CYBER deck UI</h3>
+                        </div>
+                    </div>
+                    <div class="card-img-wrapper">
+                        <!-- Picsum seed for consistency -->
+                        <img src="https://picsum.photos/seed/cyber1/600/400.jpg" alt="Cyber UI Interface">
+                    </div>
+                    <p>High-fidelity dashboard for satellite tracking data visualization. Monochromatic palette with neon accents.</p>
+                    <div class="card-tags">
+                        <span class="chip-sm">HTML</span>
+                        <span class="chip-sm">CSS</span>
+                        <span class="chip-sm">D3.JS</span>
+                    </div>
+                </article>
+
+                <!-- Card 2 -->
+                <article class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-id">ID: #0921</div>
+                            <h3 class="card-title">VOID COMMERCE</h3>
+                        </div>
+                    </div>
+                    <div class="card-img-wrapper">
+                        <img src="https://picsum.photos/seed/void/600/400.jpg" alt="E-commerce dark mode">
+                    </div>
+                    <p>An e-commerce experience focusing on typographic hierarchy and brutalist grid layouts.</p>
+                    <div class="card-tags">
+                        <span class="chip-sm">REACT</span>
+                        <span class="chip-sm">STRIPE</span>
+                        <span class="chip-sm">WEBGL</span>
+                    </div>
+                </article>
+
+                <!-- Card 3 -->
+                <article class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-id">ID: #8832</div>
+                            <h3 class="card-title">NEON TYPE</h3>
+                        </div>
+                    </div>
+                    <div class="card-img-wrapper">
+                        <img src="https://picsum.photos/seed/neon/600/400.jpg" alt="Typography showcase">
+                    </div>
+                    <p>Experimental typography showcase exploring variable fonts and kinetic type interactions.</p>
+                    <div class="card-tags">
+                        <span class="chip-sm">DESIGN</span>
+                        <span class="chip-sm">ANIMATION</span>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <!-- ABOUT / INFO SECTION -->
+        <section id="about" class="section-padding container">
+            <div class="info-layout">
+                <div>
+                    <h2>// CORE_DATA</h2>
+                    <p>
+                        We are a digital design studio operating at the intersection of <span class="highlight">classic modernism</span> and cyberpunk aesthetics. 
+                    </p>
+                    <p>
+                        Our philosophy rejects soft shadows and rounded corners in favor of raw edges, high contrast, and data-rich layouts. Every pixel serves a purpose. Every element is structural.
+                    </p>
+                    <br>
+                    <p class="text-neon-secondary">> ACCESSING MAINFRAME...<br>> PERMISSION GRANTED.</p>
+                </div>
+
+                <div class="terminal-box">
+                    <div class="stat-row">
+                        <span>ESTABLISHED</span>
+                        <span class="stat-val">2024</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>PROJECTS</span>
+                        <span class="stat-val">140+</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>CONTRAST</span>
+                        <span class="stat-val">7.0:1</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>STATUS</span>
+                        <span class="stat-val text-neon-primary">OPERATIONAL</span>
+                    </div>
+                    <br>
+                    <div style="font-family: monospace; font-size: 0.85rem; color: var(--text-muted);">
+                        p {<br>
+                        &nbsp;&nbsp;font-weight: bold;<br>
+                        &nbsp;&nbsp;letter-spacing: -1px;<br>
+                        }
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CONTACT SECTION -->
+        <section id="contact" class="section-padding container">
+            <div style="border: 2px solid var(--neon-primary); padding: var(--spacing-lg); text-align: center;">
+                <h2 style="border: none; margin-bottom: 1rem;">INITIATE HANDSHAKE</h2>
+                <p>Ready to start a project? Send a transmission.</p>
+                <a href="mailto:hello@terminal.design" class="btn btn-outline" style="margin-top: 1rem;">OPEN_CHANNEL</a>
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h4>NAVIGATION</h4>
+                    <ul>
+                        <li><a href="#">Home</a></li>
+                        <li><a href="#work">Projects</a></li>
+                        <li><a href="#about">Manifesto</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>SOCIALS</h4>
+                    <ul>
+                        <li><a href="#">Twitter / X</a></li>
+                        <li><a href="#">GitHub</a></li>
+                        <li><a href="#">LinkedIn</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>LEGAL</h4>
+                    <ul>
+                        <li><a href="#">Privacy Protocol</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div style="border-top: 1px solid var(--border-color); padding-top: 2rem; color: var(--text-muted); font-size: 0.8rem;">
+                &copy; 2024 NEO_TYPE SYSTEMS. ALL RIGHTS RESERVED. <span class="text-neon-primary">NO COOKIES.</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Minimal script for simple interactions -->
+    <script>
+        // Simple interaction for the chips
+        const chips = document.querySelectorAll('.chip');
+        chips.forEach(chip => {
+            chip.addEventListener('click', () => {
+                // Remove active class from all
+                chips.forEach(c => c.classList.remove('active'));
+                // Add to clicked
+                chip.classList.add('active');
+            });
+        });
+
+        // Console log for vibe
+        console.log("%c SYSTEM READY ", "background: #ccff00; color: #000; font-weight: bold; padding: 4px;");
+    </script>
+</body>
+</html>

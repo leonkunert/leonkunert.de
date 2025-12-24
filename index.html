@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SYSTEM // TERMINAL</title>
+    <style>
+        /* 
+         * DESIGN SYSTEM & VARIABLES 
+         * High contrast palette: Deep black bg, Neon accents.
+         */
+        :root {
+            --bg-color: #050505;
+            --surface-color: #111111;
+            --text-main: #e0e0e0;
+            --text-muted: #888888;
+            
+            /* Neon Palette */
+            --neon-green: #00ff41;
+            --neon-blue: #00f3ff;
+            --neon-pink: #ff00ff;
+            --neon-amber: #ffb000;
+            
+            /* Spacing & Borders */
+            --border-width: 3px;
+            --border-radius: 0px; /* Brutalist/Chunky look prefers sharp corners or very slight rounding */
+            --spacing-xs: 0.5rem;
+            --spacing-sm: 1rem;
+            --spacing-md: 2rem;
+            --spacing-lg: 4rem;
+            
+            /* Typography */
+            --font-mono: 'Courier New', Courier, monospace; 
+        }
+
+        /* RESET & BASE STYLES */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-mono);
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: none; /* Crisper text for retro feel */
+        }
+
+        /* 
+         * CRT EFFECT OVERLAY 
+         * Uses pointer-events: none so it doesn't block interactions.
+         */
+        .crt-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(
+                to bottom,
+                rgba(255, 255, 255, 0),
+                rgba(255, 255, 255, 0) 50%,
+                rgba(0, 0, 0, 0.2) 50%,
+                rgba(0, 0, 0, 0.2)
+            );
+            background-size: 100% 4px;
+            z-index: 999;
+            pointer-events: none;
+            animation: flicker 0.15s infinite;
+        }
+
+        .crt-overlay::after {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background: radial-gradient(circle, rgba(0,0,0,0) 60%, rgba(0,0,0,0.6) 100%);
+            z-index: 2;
+        }
+
+        @keyframes flicker {
+            0% { opacity: 0.95; }
+            50% { opacity: 0.9; }
+            100% { opacity: 0.95; }
+        }
+
+        /* Reduce motion for accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            .crt-overlay { animation: none; }
+        }
+
+        /* 
+         * LAYOUT UTILITIES 
+         */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--spacing-sm);
+            position: relative;
+            z-index: 10; /* Above overlay */
+        }
+
+        section {
+            padding: var(--spacing-lg) 0;
+            border-bottom: 1px solid #222;
+        }
+
+        /* 
+         * TYPOGRAPHY 
+         */
+        h1, h2, h3, h4 {
+            text-transform: uppercase;
+            letter-spacing: -0.05em;
+            font-weight: 700;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        h1 {
+            font-size: clamp(2.5rem, 5vw, 5rem);
+            line-height: 1;
+            text-shadow: 2px 2px 0px var(--neon-green);
+            color: var(--text-main);
+        }
+
+        h2 {
+            font-size: clamp(1.8rem, 3vw, 2.5rem);
+            color: var(--neon-blue);
+            display: inline-block;
+            border-bottom: var(--border-width) solid var(--neon-blue);
+            margin-bottom: var(--spacing-md);
+            background: var(--bg-color); /* Mask the line behind text */
+            padding-right: var(--spacing-md);
+        }
+
+        p {
+            margin-bottom: var(--spacing-sm);
+            max-width: 70ch;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        /* 
+         * COMPONENTS: CHUNKY CHIPS & BUTTONS 
+         */
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            border: var(--border-width) solid var(--text-muted);
+            color: var(--text-muted);
+            padding: 0.4rem 0.8rem;
+            font-size: 0.85rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+            transition: all 0.2s ease;
+            cursor: default;
+        }
+
+        .chip.active, .chip:hover {
+            border-color: var(--neon-green);
+            color: var(--neon-green);
+            background-color: rgba(0, 255, 65, 0.1);
+            box-shadow: 4px 4px 0px rgba(0, 255, 65, 0.2);
+            transform: translate(-2px, -2px);
+        }
+
+        .btn {
+            display: inline-block;
+            background: transparent;
+            color: var(--neon-green);
+            border: var(--border-width) solid var(--neon-green);
+            padding: 1rem 2rem;
+            font-family: var(--font-mono);
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn:hover {
+            background: var(--neon-green);
+            color: var(--bg-color);
+            box-shadow: 6px 6px 0px var(--neon-blue);
+            transform: translate(-3px, -3px);
+        }
+
+        .btn:active {
+            transform: translate(0, 0);
+            box-shadow: 2px 2px 0px var(--neon-blue);
+        }
+
+        /* 
+         * NAVIGATION 
+         */
+        header {
+            padding: var(--spacing-md) 0;
+            border-bottom: var(--border-width) solid var(--surface-color);
+        }
+
+        .nav-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--text-main);
+        }
+        
+        .logo span { color: var(--neon-pink); }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: var(--spacing-md);
+        }
+
+        nav a {
+            font-weight: bold;
+            position: relative;
+        }
+
+        nav a::before {
+            content: '>';
+            position: absolute;
+            left: -15px;
+            opacity: 0;
+            color: var(--neon-pink);
+            transition: opacity 0.2s;
+        }
+
+        nav a:hover {
+            color: var(--neon-pink);
+        }
+
+        nav a:hover::before {
+            opacity: 1;
+        }
+
+        /* 
+         * HERO SECTION 
+         */
+        .hero {
+            min-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+        }
+
+        .hero-glitch {
+            font-size: 1.2rem;
+            color: var(--neon-blue);
+            margin-bottom: var(--spacing-md);
+            display: block;
+        }
+
+        /* 
+         * PROJECTS GRID 
+         */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: var(--spacing-md);
+        }
+
+        .card {
+            border: var(--border-width) solid var(--surface-color);
+            background: var(--surface-color);
+            padding: var(--border-width);
+            transition: transform 0.3s ease, border-color 0.3s ease;
+            position: relative;
+        }
+
+        .card:hover {
+            border-color: var(--neon-blue);
+            transform: translateY(-5px);
+        }
+
+        .card-inner {
+            border: 1px dashed #333;
+            padding: var(--spacing-sm);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            filter: grayscale(100%) contrast(1.2);
+            border-bottom: var(--border-width) solid var(--surface-color);
+            margin-bottom: var(--spacing-sm);
+            transition: filter 0.3s ease;
+        }
+
+        .card:hover .card-img {
+            filter: grayscale(0%) contrast(1.1);
+        }
+
+        .card-title {
+            color: var(--neon-green);
+            font-size: 1.4rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-desc {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            flex-grow: 1;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .card-footer {
+            margin-top: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* 
+         * TERMINAL / CONTACT SECTION 
+         */
+        .terminal-window {
+            background: #000;
+            border: var(--border-width) solid var(--text-muted);
+            padding: var(--spacing-md);
+            box-shadow: 10px 10px 0px #222;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .terminal-header {
+            display: flex;
+            gap: 8px;
+            margin-bottom: var(--spacing-md);
+            border-bottom: 1px solid #333;
+            padding-bottom: 0.5rem;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        .dot.red { background: var(--neon-pink); }
+        .dot.yellow { background: var(--neon-amber); }
+        .dot.green { background: var(--neon-green); }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            color: var(--neon-blue);
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        input, textarea {
+            width: 100%;
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid #333;
+            color: var(--text-main);
+            font-family: var(--font-mono);
+            font-size: 1rem;
+            padding: 0.5rem 0;
+            outline: none;
+        }
+
+        input:focus, textarea:focus {
+            border-bottom-color: var(--neon-green);
+            background: rgba(0, 255, 65, 0.05);
+        }
+
+        /* 
+         * FOOTER 
+         */
+        footer {
+            text-align: center;
+            padding: var(--spacing-lg) 0;
+            border-top: var(--border-width) solid var(--surface-color);
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+
+        .status-line {
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+        
+        .blink { animation: blinker 1s linear infinite; }
+        @keyframes blinker { 50% { opacity: 0; } }
+
+        /* Responsive Tweaks */
+        @media (max-width: 768px) {
+            .nav-inner {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            h1 { font-size: 2.5rem; }
+            .terminal-window { border-width: 1px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- CRT VISUAL FX OVERLAY -->
+    <div class="crt-overlay"></div>
+
+    <!-- NAVIGATION -->
+    <header>
+        <div class="container nav-inner">
+            <div class="logo">
+                DEV_SYSTEM<span class="blink">_</span>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#projects">./PROJECTS</a></li>
+                    <li><a href="#about">./ABOUT</a></li>
+                    <li><a href="#contact">./CONTACT</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <!-- HERO SECTION -->
+        <section class="hero">
+            <div class="container">
+                <span class="hero-glitch">root@user:~$ run_init_sequence.sh</span>
+                <h1>MODERN<br>DIGITAL<br>CLASSIC</h1>
+                <p style="font-size: 1.2rem; color: var(--text-muted); margin-top: 1rem;">
+                    High-performance web architecture with a retro-futurist soul. 
+                    Building interfaces that pop off the screen.
+                </p>
+                <div style="margin-top: 2rem;">
+                    <span class="chip active">Frontend</span>
+                    <span class="chip active">UI/UX</span>
+                    <span class="chip">Systems</span>
+                </div>
+                <div style="margin-top: 2rem;">
+                    <a href="#projects" class="btn">Initialize Protocol</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- PROJECTS GRID -->
+        <section id="projects">
+            <div class="container">
+                <h2>// 01. SELECTED_WORKS</h2>
+                
+                <div class="grid">
+                    <!-- Project 1 -->
+                    <article class="card">
+                        <div class="card-inner">
+                            <img src="https://picsum.photos/seed/tech1/600/400" alt="Project Screenshot" class="card-img">
+                            <h3 class="card-title">Neon Dashboard</h3>
+                            <p class="card-desc">
+                                A high-contrast analytics platform featuring real-time data visualization and modular widgets.
+                            </p>
+                            <div class="card-footer">
+                                <div>
+                                    <span class="chip">React</span>
+                                    <span class="chip">D3.js</span>
+                                </div>
+                                <a href="#" style="color:var(--neon-blue); text-decoration: underline;">[VIEW_LOG]</a>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- Project 2 -->
+                    <article class="card">
+                        <div class="card-inner">
+                            <img src="https://picsum.photos/seed/tech2/600/400" alt="Project Screenshot" class="card-img">
+                            <h3 class="card-title">Cyber Commerce</h3>
+                            <p class="card-desc">
+                                Headless e-commerce solution built for speed and conversion, featuring a brutalist design system.
+                            </p>
+                            <div class="card-footer">
+                                <div>
+                                    <span class="chip">Shopify</span>
+                                    <span class="chip">Vue</span>
+                                </div>
+                                <a href="#" style="color:var(--neon-blue); text-decoration: underline;">[VIEW_LOG]</a>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- Project 3 -->
+                    <article class="card">
+                        <div class="card-inner">
+                            <img src="https://picsum.photos/seed/tech3/600/400" alt="Project Screenshot" class="card-img">
+                            <h3 class="card-title">Terminal Chat</h3>
+                            <p class="card-desc">
+                                An encrypted messaging interface styled like a vintage BBS system with modern websocket speeds.
+                            </p>
+                            <div class="card-footer">
+                                <div>
+                                    <span class="chip">WebSockets</span>
+                                    <span class="chip">Node</span>
+                                </div>
+                                <a href="#" style="color:var(--neon-blue); text-decoration: underline;">[VIEW_LOG]</a>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- ABOUT / STATS -->
+        <section id="about">
+            <div class="container">
+                <h2>// 02. SYSTEM_INFO</h2>
+                <div class="grid" style="grid-template-columns: 2fr 1fr;">
+                    <div>
+                        <p>
+                            Specializing in the construction of digital environments where form follows function. 
+                            I believe that the web should be accessible, performant, and expressive. 
+                            My approach combines the raw efficiency of command-line interfaces with the 
+                            intuitive expectations of modern users.
+                        </p>
+                        <p style="color: var(--neon-green); margin-top: 1rem;">
+                            > STATUS: ONLINE<br>
+                            > LOCATION: EARTH<br>
+                            > AVAILABILITY: OPEN
+                        </p>
+                    </div>
+                    <div style="border: 2px solid var(--surface-color); padding: 1rem;">
+                        <h4 style="color: var(--text-muted); border-bottom: 1px solid #333; margin-bottom: 1rem;">SKILL_MATRIX</h4>
+                        <ul style="list-style: none;">
+                            <li style="margin-bottom: 0.5rem; display: flex; justify-content: space-between;">
+                                <span>HTML5/CSS3</span> <span style="color:var(--neon-green)">98%</span>
+                            </li>
+                            <li style="margin-bottom: 0.5rem; display: flex; justify-content: space-between;">
+                                <span>JavaScript</span> <span style="color:var(--neon-blue)">90%</span>
+                            </li>
+                            <li style="margin-bottom: 0.5rem; display: flex; justify-content: space-between;">
+                                <span>Design</span> <span style="color:var(--neon-pink)">85%</span>
+                            </li>
+                            <li style="margin-bottom: 0.5rem; display: flex; justify-content: space-between;">
+                                <span>Optimization</span> <span style="color:var(--neon-amber)">95%</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CONTACT SECTION -->
+        <section id="contact">
+            <div class="container">
+                <h2>// 03. ESTABLISH_UPLINK</h2>
+                <div class="terminal-window">
+                    <div class="terminal-header">
+                        <div class="dot red"></div>
+                        <div class="dot yellow"></div>
+                        <div class="dot green"></div>
+                        <span style="margin-left: auto; font-size: 0.8rem; color: #555;">bash -- 80x24</span>
+                    </div>
+                    
+                    <form action="#" onsubmit="event.preventDefault(); alert('TRANSMISSION SENT.');">
+                        <div class="form-group">
+                            <label for="name">> ENTER IDENTIFIER</label>
+                            <input type="text" id="name" placeholder="e.g. USER_01" autocomplete="off">
+                        </div>
+                        <div class="form-group">
+                            <label for="email">> ENTER FREQUENCY (EMAIL)</label>
+                            <input type="email" id="email" placeholder="user@domain.com" autocomplete="off">
+                        </div>
+                        <div class="form-group">
+                            <label for="message">> TRANSMISSION DATA</label>
+                            <textarea id="message" rows="5" placeholder="Type message here..."></textarea>
+                        </div>
+                        <div style="text-align: right;">
+                            <button type="submit" class="btn">SEND_DATA</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="status-line">
+                <span style="color: var(--neon-green);">●</span> SYSTEM OPERATIONAL
+            </div>
+            <p>
+                &copy; 2023 SYSTEM_ROOT. ALL RIGHTS RESERVED. <br>
+                <span style="opacity: 0.5;">NO COOKIES. NO TRACKERS. PURE CODE.</span>
+            </p>
+        </div>
+    </footer>
+
+    <!-- Minimal script to update a subtle time element if needed, or to add interactivity -->
+    <script>
+        // Adds a typing effect to the logo on load
+        document.addEventListener('DOMContentLoaded', () => {
+            const logo = document.querySelector('.logo');
+            const originalText = logo.innerText;
+            logo.innerText = '';
+            let i = 0;
+            
+            const typeWriter = () => {
+                if (i < originalText.length) {
+                    logo.innerText += originalText.charAt(i);
+                    i++;
+                    setTimeout(typeWriter, 50 + Math.random() * 100); // Randomize typing speed slightly
+                }
+            };
+            
+            // Run typing effect once
+            typeWriter();
+        });
+    </script>
+</body>
+</html>
